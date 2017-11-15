@@ -10,6 +10,13 @@ namespace ElevenNote.Services
 {
     public class NoteService
     {
+        private readonly Guid _userId;
+
+        public NoteService(Guid userId)
+        {
+            _userId = userId;
+        }
+
         public IEnumerable<NoteListItemModel> GetNotes()
         {
             using (var ctx = new ElevenNoteDbContext())
@@ -17,8 +24,8 @@ namespace ElevenNote.Services
                 return
                     ctx
                         .Notes
-                        .Select(
-                            e =>
+                        .Where(e => e.UserId == _userId)
+                        .Select(e =>
                                 new NoteListItemModel
                                 {
                                     NoteId = e.NoteId,
@@ -27,6 +34,26 @@ namespace ElevenNote.Services
                                     ModifiedUtc = e.ModifiedUtc
                                 })
                         .ToArray();
+            }
+        }
+
+        public bool CreateNote(NoteCreateModel model)
+        {
+            using (var ctx = new ElevenNoteDbContext())
+            {
+                var entity =
+                    new NoteEntity
+                    {
+                        UserId = _userId,
+                        Title = model.Title,
+                        Content = model.Content,
+                        CreatedUtc = DateTime.UtcNow,
+                        ModifiedUtc = DateTime.UtcNow
+                    };
+
+                ctx.Notes.Add(entity);
+
+                return ctx.SaveChanges() == 1;
             }
         }
     }
