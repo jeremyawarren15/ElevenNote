@@ -32,6 +32,8 @@ namespace ElevenNote.Data
             return new ElevenNoteDbContext();
         }
 
+        public DbSet<NoteEntity> Notes { get; set; }
+
         // This was added too
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
