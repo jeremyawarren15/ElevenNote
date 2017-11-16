@@ -12,12 +12,17 @@ namespace ElevenNote.Web.Controllers
     [Authorize]
     public class NotesController : Controller
     {
-        // GET: Notes
-        public ActionResult Index()
+        private NoteService CreateNoteService()
         {
             var userId = Guid.Parse(User.Identity.GetUserId());
             var svc = new NoteService(userId);
-            var model = svc.GetNotes();
+
+            return svc;
+        }
+
+        public ActionResult Index()
+        {
+            var model = CreateNoteService().GetNotes();
             return View(model);
         }
 
@@ -33,10 +38,7 @@ namespace ElevenNote.Web.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            var userId = Guid.Parse(User.Identity.GetUserId());
-            var svc = new NoteService(userId);
-
-            if (!svc.CreateNote(model))
+            if (!CreateNoteService().CreateNote(model))
             {
                 ModelState.AddModelError("", "Unable to create note");
                 return View(model);
@@ -47,10 +49,18 @@ namespace ElevenNote.Web.Controllers
 
         public ActionResult Details(int id)
         {
-            var userId = Guid.Parse(User.Identity.GetUserId());
-            var svc = new NoteService(userId);
-            var model = svc.GetNoteById(id);
+            var model = CreateNoteService().GetNoteById(id);
             return View(model);
+        }
+
+        public ActionResult Edit()
+        {
+
+        }
+
+        public ActionResult Delete()
+        {
+
         }
     }
 }

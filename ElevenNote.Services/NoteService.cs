@@ -17,6 +17,33 @@ namespace ElevenNote.Services
             _userId = userId;
         }
 
+        private NoteEntity GetNoteById(ElevenNoteDbContext context, int id)
+        {
+            return context.Notes.SingleOrDefault(e => e.NoteId == id && e.UserId == _userId);
+        }
+
+        public NoteDetailModel GetNoteById(int id)
+        {
+            NoteEntity entity;
+
+            using (var ctx = new ElevenNoteDbContext())
+            {
+                entity = GetNoteById(ctx, id);
+            }
+
+            if (entity == null) return new NoteDetailModel();
+
+            return
+                new NoteDetailModel
+                {
+                    NoteId = entity.NoteId,
+                    Title = entity.Title,
+                    Content = entity.Content,
+                    CreatedUtc = entity.CreatedUtc,
+                    ModifiedUtc = entity.ModifiedUtc
+                };
+        }
+
         public IEnumerable<NoteListItemModel> GetNotes()
         {
             using (var ctx = new ElevenNoteDbContext())
@@ -57,26 +84,34 @@ namespace ElevenNote.Services
             }
         }
 
-        public NoteDetailModel GetNoteById(int id)
+        public bool UpdateNote(NoteEditModel model)
         {
-            NoteEntity entity;
-
             using (var ctx = new ElevenNoteDbContext())
             {
-                entity = ctx.Notes.SingleOrDefault(e => e.NoteId == id && e.UserId == _userId);
+                var entity = GetNoteById(ctx, model.NoteId);
+
+                if (entity == null) return false;
+
+                entity.Title = model.Title;
+                entity.Content = model.Title;
+                entity.ModifiedUtc = DateTime.UtcNow;
+
+                return ctx.SaveChanges() == 1;
             }
+        }
 
-            if (entity == null) return new NoteDetailModel();
+        public bool DeleteNote(int id)
+        {
+            using (var ctx = new ElevenNoteDbContext())
+            {
+                var entity = GetNoteById(ctx, id);
 
-            return
-                new NoteDetailModel
-                {
-                    NoteId = entity.NoteId,
-                    Title = entity.Title,
-                    Content = entity.Content,
-                    CreatedUtc = entity.CreatedUtc,
-                    ModifiedUtc = entity.ModifiedUtc
-                };
+                if (entity == null) return false;
+
+                ctx.Notes.Remove(entity);
+
+                return ctx.SaveChanges() == 1;
+            }
         }
     }
 }
