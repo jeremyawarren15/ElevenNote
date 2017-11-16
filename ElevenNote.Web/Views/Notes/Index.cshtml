@@ -26,6 +26,9 @@
             @Html.DisplayNameFor(model => model.NoteId)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.IsStarred)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.Title)
         </th>
         <th>
@@ -41,6 +44,9 @@
     <tr>
         <td>
             @Html.DisplayFor(modelItem => item.NoteId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsStarred)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Title)

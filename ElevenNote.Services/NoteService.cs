@@ -61,7 +61,8 @@ namespace ElevenNote.Services
                                     NoteId = e.NoteId,
                                     Title = e.Title,
                                     CreatedUtc = e.CreatedUtc,
-                                    ModifiedUtc = e.ModifiedUtc
+                                    ModifiedUtc = e.ModifiedUtc,
+                                    IsStarred = e.IsStarred
                                 })
                         .ToArray();
             }
