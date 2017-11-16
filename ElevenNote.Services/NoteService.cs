@@ -19,7 +19,10 @@ namespace ElevenNote.Services
 
         private NoteEntity GetNoteById(ElevenNoteDbContext context, int id)
         {
-            return context.Notes.SingleOrDefault(e => e.NoteId == id && e.UserId == _userId);
+            return 
+                context
+                    .Notes
+                    .SingleOrDefault(e => e.NoteId == id && e.UserId == _userId);
         }
 
         public NoteDetailModel GetNoteById(int id)
@@ -93,7 +96,7 @@ namespace ElevenNote.Services
                 if (entity == null) return false;
 
                 entity.Title = model.Title;
-                entity.Content = model.Title;
+                entity.Content = model.Content;
                 entity.ModifiedUtc = DateTime.UtcNow;
 
                 return ctx.SaveChanges() == 1;
