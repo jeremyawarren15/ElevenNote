@@ -56,5 +56,27 @@ namespace ElevenNote.Services
                 return ctx.SaveChanges() == 1;
             }
         }
+
+        public NoteDetailModel GetNoteById(int id)
+        {
+            NoteEntity entity;
+
+            using (var ctx = new ElevenNoteDbContext())
+            {
+                entity = ctx.Notes.SingleOrDefault(e => e.NoteId == id && e.UserId == _userId);
+            }
+
+            if (entity == null) return new NoteDetailModel();
+
+            return
+                new NoteDetailModel
+                {
+                    NoteId = entity.NoteId,
+                    Title = entity.Title,
+                    Content = entity.Content,
+                    CreatedUtc = entity.CreatedUtc,
+                    ModifiedUtc = entity.ModifiedUtc
+                };
+        }
     }
 }
